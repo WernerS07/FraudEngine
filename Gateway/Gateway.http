@@ -1,0 +1,79 @@
+@Gateway_HostAddress = http://localhost:80
+@KEYCLOAK =http://localhost:8080
+@CLIENT_ID =fraud-engine
+@CLIENT_SECRET = We9mZUVpjm8bFg8FDePdYYvYgDO9pbND
+@BASIC_TOKEN= eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJnVzBwYWE1MC1jckFVQy1Gb2NYWXVzcklfXzRwMDBKdjVQS1liYl9PTGwwIn0.eyJleHAiOjE3NzEzNDA0ODgsImlhdCI6MTc3MTM0MDE4OCwianRpIjoiNjVkZmJmOGQtODkzMC00ZThlLWFmZGUtMDVlYzg1ZWM3OTgyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9mcmF1ZC1lbmdpbmUiLCJhdWQiOlsiZnJhdWQtZW5naW5lIiwiYWNjb3VudCJdLCJzdWIiOiJhYjk1ZGFkNC1jM2Q3LTQ3ZTQtYjAxMy1jYzYxYmNiN2E5MDMiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJmcmF1ZC1lbmdpbmUiLCJzZXNzaW9uX3N0YXRlIjoiMGY3M2RkMDItNGYwZS00ZWRiLTk4NjMtOGY5Y2E4YTMzZTFmIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIGZyYXVkLWVuZ2luZS1hdWRpZW5jZSIsInNpZCI6IjBmNzNkZDAyLTRmMGUtNGVkYi05ODYzLThmOWNhOGEzM2UxZiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJyb2xlIjpbImJhc2ljLXJvbGUiLCJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtZnJhdWQtZW5naW5lIiwidW1hX2F1dGhvcml6YXRpb24iXSwibmFtZSI6ImJhc2ljIGV4YW1wbGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJiYXNpYy11c2VyIiwiZ2l2ZW5fbmFtZSI6ImJhc2ljIiwiZmFtaWx5X25hbWUiOiJleGFtcGxlIiwiZW1haWwiOiJiYXNpY0BleGFtcGxlLmNvbSJ9.G7yeA6ajnG6zTrf9k_b7v0krOniT4ERKrjjllkn49Z4YXOJVbaGTKMXnFXMMpWOofN5pImV45dbfJAkPUIK3Tbr8XMZgmSdyaJZIpfld6dDf4UGUtZIAkVM_mS-1axIKBBJsrr-SaQGpyZhLHXnJu7MH7ufrTgTBz3TMC6DSgKp-a33cbgO1UPILbUw5ad-l1M6qnwnK_f-aIedXpCV9JxQwrf8mPjFSnWPLP-WaOJFw5g8QhcrH3kyopwltA69d5ezegcslpUTMjTtg9fI83o78a6ePmmKmabu9EORU-nLEzf9iJCw-9b-6dIhj615NyoGnIdNeGm_ThWBQnXowqg
+@AUDITOR_TOKEN = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJnVzBwYWE1MC1jckFVQy1Gb2NYWXVzcklfXzRwMDBKdjVQS1liYl9PTGwwIn0.eyJleHAiOjE3NzEzOTY0NTcsImlhdCI6MTc3MTM5NjE1NywianRpIjoiMjEwODZjZWEtZjExOC00NzQ0LTg5YWMtMjhjYWI2ZGZlYzkyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9mcmF1ZC1lbmdpbmUiLCJhdWQiOlsiZnJhdWQtZW5naW5lIiwiYWNjb3VudCJdLCJzdWIiOiIwMGIwZjgyYS0wYjMyLTQxODctOTQzMS1lYzZkOGUzYjJiN2QiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJmcmF1ZC1lbmdpbmUiLCJzZXNzaW9uX3N0YXRlIjoiZWMyMDljNWEtMDhhZC00OWViLTkxYjQtODQ5OWIxNTc3ODliIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIGZyYXVkLWVuZ2luZS1hdWRpZW5jZSIsInNpZCI6ImVjMjA5YzVhLTA4YWQtNDllYi05MWI0LTg0OTliMTU3Nzg5YiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJyb2xlIjpbImJhc2ljLXJvbGUiLCJvZmZsaW5lX2FjY2VzcyIsImF1ZGl0LXJvbGUiLCJkZWZhdWx0LXJvbGVzLWZyYXVkLWVuZ2luZSIsInVtYV9hdXRob3JpemF0aW9uIl0sIm5hbWUiOiJhdWRpdG9yIGV4YW1wbGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhdWRpdG9yIiwiZ2l2ZW5fbmFtZSI6ImF1ZGl0b3IiLCJmYW1pbHlfbmFtZSI6ImV4YW1wbGUiLCJlbWFpbCI6ImF1ZGl0b3JAZXhhbXBsZS5jb20ifQ.F4DqvwYAmQR3S7i5DR8kmH80LlB3K92INFPe00BVpwsYYCNAGIsCGP334pDVeoM1CFROley2KNaYCdISuZc5oC3wYox4IPNT0GAKUrnFZtuzvqGjua5UOfbrmSnIf8enb4OFgFmVpxq5YzqgXzjfpM1adF6LLaBt0-2OF8G9WMhHEmVPD6IHXof46FoVYhTzGG8glVOEgjbhwCEwdNImHMoDSZ9F9ijs22dRBa2t4yHVVwDaHoQg3UsZ6EzUUk0cAWlWoyrloYrYNnfoQ1N82ZPDrunmOkYObSBOyxSoEXkMyVTS_tQFdnbImjE3rgjzxGvcqI3HkZxfHxhbVAMq_Q
+### Get Basic user token (password grant)
+POST http://localhost:8080/realms/fraud-engine/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=fraud-engine&client_secret=Pbu4FJ9WQNaCSWU8PB0pNr3hs0fSioXN&username=basic-user&password=basicpass
+
+### Get Auditor token (password grant)
+POST {{KEYCLOAK}}/realms/fraud-engine/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=fraud-engine&client_secret=Pbu4FJ9WQNaCSWU8PB0pNr3hs0fSioXN&username=auditor&password=auditpass
+
+###
+# Replace {{BASIC_TOKEN}} / {{AUDITOR_TOKEN}} with access_token values from the responses
+
+### Call Basic endpoint (allowed for basic user or auditor)
+GET http://localhost/fraud/Record
+Authorization: Bearer {{BASIC_TOKEN}}
+Accept: text/plain
+
+### Auditor get records
+GET http://localhost/fraud/Record/
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: text/plain
+
+### Auditor get records
+GET http://localhost/fraud/Record/FraudCheck/
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: text/plain
+
+
+###
+# UPDATE A RECORD ID TO MARK IT AS NOT FRAUDULENT
+PUT http://localhost/fraud/Record/ApproveRecord/182
+Content-Type: application/json
+Authorization: Bearer {{AUDITOR_TOKEN}}
+
+### GET ALL TRANSACTION FOR AN ACCOUNT
+GET http://localhost/fraud/Record/Account/1862?limit=5
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: text/plain
+
+
+### GET ALL TRANSACTIONS BY LOCATION
+GET http://localhost/fraud/Record/Location/Russia
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: text/plain
+
+### GET ALL TRANSACTIONS BY RECIPIENT ACCOUNT ID
+GET http://localhost/fraud/Record/Recipient/1039
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: text/plain
+
+
+### XSS Test
+GET http://localhost/fraud/../mockdata/status
+Authorization: Bearer {{BASIC_TOKEN}}
+Accept: text/plain
+
+### Proxied to mock data
+GET {{Gateway_HostAddress}}/mockdata/status
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: application/json
+
+### Proxied to mock data
+POST {{Gateway_HostAddress}}/mockdata/toggle?state=true 
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: application/json
+
+### Proxied to mock data
+POST {{Gateway_HostAddress}}/mockdata/toggle?state=false
+Authorization: Bearer {{AUDITOR_TOKEN}}
+Accept: application/json
