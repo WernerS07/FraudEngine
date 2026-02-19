@@ -1,0 +1,34 @@
+#@fraud_engine_service_HostAddress = http://localhost:5092
+@fraud_engine_service_HostAddress = http://localhost/fraud/
+###
+# RETURN A SINGLE RECORD WITH ID
+GET {{fraud_engine_service_HostAddress}}/Record/16617
+Accept: application/json
+
+###
+# GET ALL RECORDS IN DATABASE ( WILL BE DISABLED FOR PERFORMANCE AND SAFETY)
+GET {{fraud_engine_service_HostAddress}}/Record
+Accept: application/json
+
+###
+# GET ALL FRAUDULENT RECORDS
+GET {{fraud_engine_service_HostAddress}}/Record/FraudCheck
+Accept: application/json
+
+###
+# UPDATE A RECORD ID TO MARK IT AS NOT FRAUDULENT
+PUT {{fraud_engine_service_HostAddress}}/Record/ApproveRecord/182
+Content-Type: application/json
+
+
+### GET ALL TRANSACTION FOR AN ACCOUNT
+GET {{fraud_engine_service_HostAddress}}/Record/Account/1862?limit=5
+Accept: application/json
+
+
+### GET ALL TRANSACTIONS BY LOCATION
+GET {{fraud_engine_service_HostAddress}}/Record/Location/Paris
+
+
+### GET ALL TRANSACTIONS BY RECIPIENT ACCOUNT ID
+GET {{fraud_engine_service_HostAddress}}/Record/Recipient/1039
