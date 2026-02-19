@@ -1,0 +1,68 @@
+using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
+using Microsoft.EntityFrameworkCore;
+namespace Shared.Models;
+
+public class TransactionDBContext : DbContext
+{
+    public TransactionDBContext(DbContextOptions<TransactionDBContext> options) : base(options) { }
+
+    public DbSet<Record> Records { get; set; }
+    public DbSet<FlaggedLocation> FlaggedLocations { get; set; }
+    public DbSet<FlaggedAccount> FlaggedAccounts { get; set; }
+    public DbSet<FlaggedDevice> FlaggedDevices { get; set; }
+}
+
+
+
+public class Record
+{
+    [Key]
+    public int TransactionId { get; set; }
+    public required decimal Amount { get; set; }
+    public required DateTime TimeOfTransaction { get; set; }
+    public required int AccountId { get; set; }
+    public required int ReceipientId { get; set; }
+    public required string Location { get; set; }
+    public required string Device { get; set; }
+    public bool Isfraud { get; set; }
+    public string? FraudReason { get; set; }
+}
+
+
+public class FlaggedLocation
+{
+    [Key]
+    public int Id { get; set; }
+    
+    [Required]
+    [MaxLength(200)]
+    public string Location { get; set; } = string.Empty;
+    
+    public DateTime FlaggedAt { get; set; } = DateTime.UtcNow;
+}
+
+public class FlaggedAccount
+{
+    [Key]
+    public int Id { get; set; }
+    
+    [Required]
+    public int AccountId { get; set; }
+    
+    public DateTime FlaggedAt { get; set; } = DateTime.UtcNow;
+    
+    public string? Reason { get; set; }
+}
+
+public class FlaggedDevice
+{
+    [Key]
+    public int Id { get; set; }
+    
+    [Required]
+    [MaxLength(200)]
+    public string DeviceName { get; set; } = string.Empty;
+    
+    public DateTime FlaggedAt { get; set; } = DateTime.UtcNow;
+}
