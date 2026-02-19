@@ -1,0 +1,11 @@
+@mockdata_service_HostAddress = http://localhost/mockdata
+
+
+### - Start generation
+POST {{mockdata_service_HostAddress}}/toggle?state=true 
+
+### - Stop generation
+POST {{mockdata_service_HostAddress}}/toggle?state=false 
+
+### - Check current state
+GET {{mockdata_service_HostAddress}}/status
