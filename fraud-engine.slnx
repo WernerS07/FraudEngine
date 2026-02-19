@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Fraud Engine Service/">
+    <Project Path="FraudEngineService/FraudEngineService.csproj" />
+  </Folder>
+  <Folder Name="/Kafka Consumer/">
+    <Project Path="KafkaConsumer/KafkaConsumer.csproj" />
+  </Folder>
+  <Project Path="Gateway/Gateway.csproj" />
+  <Project Path="MockDataProducer/MockDataProducer.csproj" />
+  <Project Path="Shared/Shared.csproj" />
+</Solution>
