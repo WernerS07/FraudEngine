@@ -100,6 +100,10 @@ namespace Shared.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Device")
                         .IsRequired()
                         .HasColumnType("text");

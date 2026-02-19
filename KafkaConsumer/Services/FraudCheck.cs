@@ -35,8 +35,9 @@ public class FraudCheck
             var fraudReasons = new List<string>();
             
             // Run checks with reason tracking
-            if (IsHighAmount(record.Amount))
-                fraudReasons.Add("Rule 1: High Amount");
+
+            if(CategoryAmountCheck(record.Category, record.Amount))
+                fraudReasons.Add("Rule 1: Unusual Amount for Category");
                 
             if (await IsFlaggedLocationAsync(record.Location))
                 fraudReasons.Add("Rule 2: Flagged Location");
@@ -90,12 +91,6 @@ public class FraudCheck
         }
     }
 
-    // RULE 1: IF transaction amount is above limit -> flag transaction
-    private static bool IsHighAmount(decimal amount)
-    {
-        return amount > 10000;
-    }
-
     // RULE 2: If transaction was made in flagged location -> flag transaction
     private async Task<bool> IsFlaggedLocationAsync(string location)
     {
@@ -112,8 +107,10 @@ public class FraudCheck
                 .ToListAsync()
         );
 
-        // Check cache first
-        if (flaggedLocations.Contains(location.ToLower()))
+        var locationLower = location.ToLower();
+        var flaggedSet = new HashSet<string>(flaggedLocations);
+
+        if (flaggedSet.Contains(locationLower))
             return true;
 
         // Cache miss - check DB directly for this specific location
@@ -123,8 +120,8 @@ public class FraudCheck
         if (existsInDb)
         {
             // Found in DB but not in cache - add it and update cache
-            flaggedLocations.Add(location.ToLower());
-            await _cache.SetCacheAsync(cacheKey, flaggedLocations, FlaggedDataCacheDuration);
+            flaggedSet.Add(locationLower);
+            await _cache.SetCacheAsync(cacheKey, flaggedSet.ToList(), FlaggedDataCacheDuration);
             _logger.LogInformation("Added newly flagged location to cache: {Location}", location);
             return true;
         }
@@ -148,7 +145,10 @@ public class FraudCheck
                 .ToListAsync()
         );
 
-        if (flaggedDevices.Contains(deviceName.ToLower()))
+        var deviceLower = deviceName.ToLower();
+        var flaggedSet = new HashSet<string>(flaggedDevices);
+
+        if (flaggedSet.Contains(deviceLower))
             return true;
 
         // Cache miss - check DB directly
@@ -157,8 +157,8 @@ public class FraudCheck
         
         if (existsInDb)
         {
-            flaggedDevices.Add(deviceName.ToLower());
-            await _cache.SetCacheAsync(cacheKey, flaggedDevices, FlaggedDataCacheDuration);
+            flaggedSet.Add(deviceLower);
+            await _cache.SetCacheAsync(cacheKey, flaggedSet.ToList(), FlaggedDataCacheDuration);
             _logger.LogInformation("Added newly flagged device to cache: {Device}", deviceName);
             return true;
         }
@@ -179,7 +179,9 @@ public class FraudCheck
                 .ToListAsync()
         );
 
-        if (flaggedAccounts.Contains(recipientId) ||flaggedAccounts.Contains(accountId) )
+        var flaggedSet = new HashSet<int>(flaggedAccounts);
+
+        if (flaggedSet.Contains(recipientId) || flaggedSet.Contains(accountId))
             return true;
 
         // Cache miss - check DB for ONLY these 2 specific IDs (efficient!)
@@ -188,19 +190,19 @@ public class FraudCheck
             .Select(r => r.AccountId)
             .ToListAsync();
 
-        bool temp =false;
+        bool temp = false;
         if (flaggedIds.Contains(recipientId))
         {
             temp = true;
-            flaggedAccounts.Add(recipientId);
-            await _cache.SetCacheAsync(cacheKey, flaggedAccounts, FlaggedDataCacheDuration);
+            flaggedSet.Add(recipientId);
+            await _cache.SetCacheAsync(cacheKey, flaggedSet.ToList(), FlaggedDataCacheDuration);
             _logger.LogInformation("Added newly flagged recipient to cache: {recipientId}", recipientId);
         }
-        if(flaggedIds.Contains(accountId))
+        if (flaggedIds.Contains(accountId))
         {
             temp = true;
-            flaggedAccounts.Add(accountId);
-            await _cache.SetCacheAsync(cacheKey, flaggedAccounts, FlaggedDataCacheDuration);
+            flaggedSet.Add(accountId);
+            await _cache.SetCacheAsync(cacheKey, flaggedSet.ToList(), FlaggedDataCacheDuration);
             _logger.LogInformation("Added newly flagged accountId to cache: {accountId}", accountId);
         }
         return temp;
@@ -220,45 +222,51 @@ public class FraudCheck
     // Rule 6: Multiple Transactions Within 2 minutes
     private async Task<bool> IsMultipleTransactionsAsync(int accountId, DateTime transactionTime)
     {
-        string cacheKey = $"recent_transactions_{accountId}";
-        
-        // Calculate time window ONCE at the start
-        var twoMinutesAgo = DateTime.UtcNow.AddMinutes(-2);
-        
-        // Get or fetch recent transactions for this account
-        var recentTransactions = await GetOrSetCacheAsync(
-            cacheKey,
-            async () =>
-            {
-                return await _context.Records
-                    .Where(r => r.AccountId == accountId && r.TimeOfTransaction >= twoMinutesAgo)
-                    .Select(r => r.TimeOfTransaction)
-                    .OrderByDescending(t => t)
-                    .ToListAsync();
-            },
-            RecentTransactionsCacheDuration // 2 minutes
-        );
+        string cacheKey = $"recent_tx_count_{accountId}";
 
-        // No need to re-filter - the data is already filtered by the DB query
-        // Just add current transaction
-        recentTransactions.Add(transactionTime);
+        // Get current count (fixed 2-minute window via TTL)
+        var currentCount = await _cache.GetCacheAsync<int?>(cacheKey) ?? 0;
 
-        // Update cache with new transaction added
-        await _cache.SetCacheAsync(cacheKey, recentTransactions, RecentTransactionsCacheDuration);
+        currentCount++;
 
-        // Check if there are more than 3 transactions in the last 2 minutes
-        bool isFraud = recentTransactions.Count > 3;
+        // Reset TTL to 2 minutes on every update
+        await _cache.SetCacheAsync(cacheKey, currentCount, RecentTransactionsCacheDuration);
+
+        bool isFraud = currentCount > 3;
 
         if (isFraud)
         {
             _logger.LogWarning(
                 "Multiple rapid transactions detected: Account={AccountId}, Count={Count} in last 2 minutes",
-                accountId, recentTransactions.Count);
+                accountId, currentCount);
         }
 
         return isFraud;
     }
    
+    // Rule 1: Unusual Amount for Category
+    private static bool CategoryAmountCheck(string category, decimal amount)
+    {        // Define typical amount thresholds for categories
+        var categoryThresholds = new Dictionary<string, decimal>
+        {
+            { "Groceries", 3000m },        // Large monthly shop at Checkers/Woolworths
+            { "Electronics", 25000m },     // Laptop, high-end phone
+            { "Clothing", 5000m },         // Branded clothing haul
+            { "Travel", 40000m },          // Domestic flights + accommodation
+            { "Dining", 2500m },           // Upscale restaurant bill
+            { "Entertainment", 8000m },    // Events, concerts, gaming consoles
+            { "Health", 10000m },          // Specialist visit or procedure
+            { "Utilities", 5000m },        // Electricity prepay bulk / municipal bill
+            { "Education", 60000m },       // School/varsity fee payment
+            { "Automotive", 120000m }      // Major repair, deposit, or parts
+        };
+
+        if (categoryThresholds.TryGetValue(category, out var threshold))
+        {
+            return amount > threshold;
+        }
+        return false;
+    }
 
     // HOW TO USE: 
     // PASS in the cache key, and a async DB get function

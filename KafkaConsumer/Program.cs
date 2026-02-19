@@ -7,9 +7,9 @@ using StackExchange.Redis;
 
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning) 
+    .MinimumLevel.Error()
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Error)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Error) 
     .WriteTo.Console()
     .CreateLogger();
 
@@ -52,22 +52,7 @@ try
     
     var host = builder.Build();
 
-    // Run migrations on startup
-    using (var scope = host.Services.CreateScope())
-    {
-        var services = scope.ServiceProvider;
-        try
-        {
-            var context = services.GetRequiredService<TransactionDBContext>();
-            context.Database.Migrate();
-            Console.WriteLine("Database migrations applied successfully.");
-        }
-        catch (Exception ex)
-        {
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred while migrating the database.");
-        }
-    }  
+   
     Log.Information("Kafka Consumer starting...");
     await host.RunAsync();
 }

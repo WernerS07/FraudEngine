@@ -8,8 +8,8 @@ COPY ["MockDataProducer/MockDataProducer.csproj", "MockDataProducer/"]
 COPY ["Shared/Shared.csproj", "Shared/"]
 
 
-COPY /certs/ /usr/local/share/ca-certificates/
-RUN cat /usr/local/share/ca-certificates/* >> /etc/ssl/certs/ca-certificates.crt
+#COPY /certs/ /usr/local/share/ca-certificates/
+#RUN cat /usr/local/share/ca-certificates/* >> /etc/ssl/certs/ca-certificates.crt
 
 RUN dotnet restore "MockDataProducer/MockDataProducer.csproj"
 COPY . .

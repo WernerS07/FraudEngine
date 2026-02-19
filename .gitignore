@@ -2,16 +2,16 @@
 
 ## FRAUD ENGINE ##
 FraudEngineService/fraud-engine-service.http
-FraudEngineService/obj/*
-FraudEngineService/bin/*
+FraudEngineService/obj*
+FraudEngineService/bin*
 
 ## KAFKA CONSUMER ##
-KafkaConsumer/obj/*
-KafkaConsumer/bin/*
+KafkaConsumer/obj*
+KafkaConsumer/bin*
 
 ## MOCK DATA PRODUCER ##
-MockDataProducer/obj/*
-MockDataProducer/bin/*
+MockDataProducer/obj*
+MockDataProducer/bin*
 
 ##POST GRES## 
 postgres/
@@ -20,10 +20,10 @@ postgres/
 Archive/
 
 ## Gateway
-Gateway/obj/*
-Gateway/bin/*
+Gateway/obj*
+Gateway/bin*
 Gateway/Gateway.http
 
 ## Shared
-Shared/obj/*
-Shared/bin/*
+Shared/obj*
+Shared/bin*

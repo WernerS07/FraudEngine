@@ -112,6 +112,7 @@ public class TransactionConsumer : BackgroundService
                 ReceipientId = transaction.ReceipientId,
                 Location = transaction.Location,
                 Device = transaction.Device,
+                Category = transaction.Category,
                 Isfraud = false
             };
 

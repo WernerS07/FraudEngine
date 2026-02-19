@@ -12,7 +12,7 @@ using Shared.Models;
 namespace Shared.Migrations
 {
     [DbContext(typeof(TransactionDBContext))]
-    [Migration("20260213085325_InitialCreate")]
+    [Migration("20260219195924_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -102,6 +102,10 @@ namespace Shared.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Device")
                         .IsRequired()

@@ -25,6 +25,7 @@ public class Record
     public required int ReceipientId { get; set; }
     public required string Location { get; set; }
     public required string Device { get; set; }
+    public required string Category { get; set; }
     public bool Isfraud { get; set; }
     public string? FraudReason { get; set; }
 }

@@ -7,8 +7,8 @@ WORKDIR /src
 COPY ["Gateway/Gateway.csproj", "Gateway/"]
 
 
-COPY /certs/ /usr/local/share/ca-certificates/
-RUN cat /usr/local/share/ca-certificates/* >> /etc/ssl/certs/ca-certificates.crt
+#COPY /certs/ /usr/local/share/ca-certificates/
+#RUN cat /usr/local/share/ca-certificates/* >> /etc/ssl/certs/ca-certificates.crt
 
 RUN dotnet restore "Gateway/Gateway.csproj"
 COPY . .

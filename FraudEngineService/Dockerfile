@@ -8,8 +8,8 @@ COPY ["FraudEngineService/FraudEngineService.csproj", "FraudEngineService/"]
 COPY ["Shared/Shared.csproj", "Shared/"]
 
 
-COPY /certs/ /usr/local/share/ca-certificates/
-RUN cat /usr/local/share/ca-certificates/* >> /etc/ssl/certs/ca-certificates.crt
+#COPY /certs/ /usr/local/share/ca-certificates/
+#RUN cat /usr/local/share/ca-certificates/* >> /etc/ssl/certs/ca-certificates.crt
 
 RUN dotnet restore "FraudEngineService/FraudEngineService.csproj"
 COPY . .

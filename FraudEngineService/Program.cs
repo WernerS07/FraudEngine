@@ -29,14 +29,30 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 builder.Services.AddSingleton<RedisCacheService>();
 
-// Add DbContext
 builder.Services.AddDbContext<TransactionDBContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsql => npgsql.MigrationsAssembly("Shared")));
 
 builder.Services.AddScoped<RecordService>();
 
 var app = builder.Build();
 
+ // Run migrations on startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<TransactionDBContext>();
+            context.Database.Migrate();
+            Console.WriteLine("Database migrations applied successfully.");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while migrating the database.");
+        }
+    }  
 // Configure the HTTP request pipeline
 app.MapControllers(); 
 

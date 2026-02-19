@@ -67,6 +67,7 @@ namespace Shared.Migrations
                     ReceipientId = table.Column<int>(type: "integer", nullable: false),
                     Location = table.Column<string>(type: "text", nullable: false),
                     Device = table.Column<string>(type: "text", nullable: false),
+                    Category = table.Column<string>(type: "text", nullable: false),
                     Isfraud = table.Column<bool>(type: "boolean", nullable: false),
                     FraudReason = table.Column<string>(type: "text", nullable: true)
                 },
