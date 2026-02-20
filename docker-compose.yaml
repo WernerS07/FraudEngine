@@ -1,3 +1,5 @@
+
+
 services: 
   # add secret injection via vault
   kafka:

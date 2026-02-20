@@ -22,8 +22,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Authorization policies
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("BasicUser", p => p.RequireRole("basic-role", "audit-role"));
-    options.AddPolicy("Auditor", p => p.RequireRole("audit-role"));
+    options.AddPolicy("BasicPriv", p => p.RequireRole("basic-role", "higher-priv-role"));
+    options.AddPolicy("HigherPriv", p => p.RequireRole("higher-priv-role"));
 });
 
 var app = builder.Build();
