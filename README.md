@@ -31,8 +31,8 @@ Main Componenets / Micro-services:
     
 Files needed to run locally:
 
-    - If running on a Capitec device. A zscaler root certificate needs to be in the certs/ folder. If it is 
-      missing the docker files will fail when attemping to download nuget packages.   
+    - If running on a device protected by zscaler. A zscaler root certificate needs to be in the certs/ folder. If it is 
+      missing the docker files will fail when attemping to download nuget packages during a dotnet restore. Also, in the current configuration the dockerfiles will not copy the certs, as there are no present. In the case where a zscaler cert is added, the dockerfiles need to have the comments removed on the lines that are responsible for copying the certs.
     - A demo .env is included that has all the neccesary credentials to build and run the Fraud Engine  
       However, for production, secrets should be kept in a vault and injected at run time. 
     - Also included is a keycloak-config.json file that has all the realm, client and role settings to run the   
@@ -41,8 +41,8 @@ Files needed to run locally:
 
 Testing: 
 
-    - To test the Fraud Engine, a .html file is provided in the root folder that includes all the api requests.  
-      Included in this is also 2 clients with a user and pass, to test both of the access roles. Each endpoint is documented in this file. 
+    - To test the Fraud Engine, a api-test.html file is provided in the root folder that includes all the api requests with documentation.  
+      Included in this is also 2 clients with a user and pass, to test both of the access roles.
 
 Additional requirements:
 

@@ -1,0 +1,4 @@
+IF you are running the docker-compose on device that has zscaler, your zscaler root certs should be added to the certs folder to ensure the dockerfiles do not throw ssl errors during dotnet restore command. If file is run on a privately owned device, no certs are needed. As the project does not use https, for demo purposes. All services are protected behind gateway and in production environment the gateway would be protected with https. The keycloak admin dashboard would not be accessible or exposed to the outside in a production environment, and would also use https. 
+
+IMPORTANT: 
+IF you have added certs, be sure to remove this readme and update the docker files in FraudEngineService,Gateway,KafkaConsumer,MockDataProducer to enable the copying of the certs during build process. In the current configuration that step has been disabled as it is not needed for devices that are no protected by zscaler. 

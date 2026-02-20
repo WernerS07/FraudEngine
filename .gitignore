@@ -27,3 +27,4 @@ Gateway/Gateway.http
 ## Shared
 Shared/obj*
 Shared/bin*
+.DS_Store
