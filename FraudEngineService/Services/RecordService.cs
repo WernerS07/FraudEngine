@@ -217,4 +217,26 @@ public class RecordService
         );
         return paginatedResponse;
     }
+
+    public async Task<PaginatedResponse<Record>> GetRecordByCategory(string category, int limit, int offset)
+    {
+        string cacheKey = $"records_category_{category}_limit_{limit}_offset_{offset}";
+        var paginatedResponse = await GetOrSetCachePaginatedAsync(
+            cacheKey,
+            async () => {
+                // Just fetch the raw list here
+                return await _context.Records
+                    .Where(r => EF.Functions.Like(r.Category.ToLower(), category.ToLower()))
+                    .OrderBy(r => r.TransactionId)
+                    .Skip(offset)
+                    .Take(limit)
+                    .ToListAsync();
+            },
+            offset,
+            limit,
+            async () => await _context.Records.Where(r => EF.Functions.Like(r.Category.ToLower(), category.ToLower())).CountAsync()
+
+        );
+        return paginatedResponse;
+    }
 }

@@ -46,6 +46,49 @@ var app = builder.Build();
             var context = services.GetRequiredService<TransactionDBContext>();
             context.Database.Migrate();
             Console.WriteLine("Database migrations applied successfully.");
+
+            Console.WriteLine("Seeding database with sample flagged locations, accounts and devices...");
+
+            // Flagged Locations 
+            var flaggedLocations = new List<FlaggedLocation>
+            {
+                new FlaggedLocation { Location = "New York" },
+                new FlaggedLocation { Location = "China" },
+                new FlaggedLocation { Location = "India" },
+                new FlaggedLocation { Location = "Russia" },
+            };
+            context.FlaggedLocations.AddRange(flaggedLocations);
+            
+            // Flagged Devices
+            var flaggedDevices = new List<FlaggedDevice>
+            {
+                new FlaggedDevice { DeviceName = "Xiaomi Mi 12" },
+                new FlaggedDevice { DeviceName = "Google Pixel 8" },
+                new FlaggedDevice { DeviceName = "OnePlus 11" },
+            };
+            context.FlaggedDevices.AddRange(flaggedDevices);
+
+            // Flagged Accounts
+            var flaggedAccounts = new List<FlaggedAccount>
+            {
+                new FlaggedAccount { AccountId = 33010 },
+                new FlaggedAccount { AccountId = 44020 },
+                new FlaggedAccount { AccountId = 55030 },
+                new FlaggedAccount { AccountId = 66040 },
+                new FlaggedAccount { AccountId = 77050 },
+                new FlaggedAccount { AccountId = 14020 },
+                new FlaggedAccount { AccountId = 25030 },
+                new FlaggedAccount { AccountId = 96040 },
+                new FlaggedAccount { AccountId = 37050 },
+                new FlaggedAccount { AccountId = 74020 },
+                new FlaggedAccount { AccountId = 65030 },
+                new FlaggedAccount { AccountId = 90040 },
+                new FlaggedAccount { AccountId = 57050 }
+            };
+            context.FlaggedAccounts.AddRange(flaggedAccounts);
+
+            context.SaveChanges();
+            Console.WriteLine("Database seeding completed.");
         }
         catch (Exception ex)
         {

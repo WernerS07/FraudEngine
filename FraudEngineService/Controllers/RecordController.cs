@@ -109,9 +109,9 @@ public class RecordController : ControllerBase
     public async Task<ActionResult<List<Record>>> GetByAccount(
         int id,    
         [FromQuery] int limit = 10,
-        [FromQuery] int page = 0)
+        [FromQuery] int page = 1)
     {   
-        int offset = page * limit;
+        int offset = (page - 1) * limit;
         if(limit <= 0 || limit > 100) {
 
                 return BadRequest("Limit must be between 0 and 100");
@@ -137,9 +137,9 @@ public class RecordController : ControllerBase
     public async Task<ActionResult<List<Record>>> GetByRecipient(
         int id,    
         [FromQuery] int limit = 10,
-        [FromQuery] int page = 0)
+        [FromQuery] int page = 1)
     {   
-        int offset = page * limit;
+        int offset = (page - 1) * limit;
         if(limit <= 0 || limit > 100) {
 
                 return BadRequest("Limit must be between 0 and 100");
@@ -165,9 +165,9 @@ public class RecordController : ControllerBase
     public async Task<ActionResult<List<Record>>> GetByLocation(
         string location,    
         [FromQuery] int limit = 10,
-        [FromQuery] int page = 0)
+        [FromQuery] int page = 1)
     {   
-        int offset = page * limit;
+        int offset = (page - 1) * limit;
         if(limit <= 0 || limit > 100) {
 
                 return BadRequest("Limit must be between 0 and 100");
@@ -179,6 +179,38 @@ public class RecordController : ControllerBase
         int _limit = (limit <= 100) && (limit > 0) ? limit : 10;
         int _offset = offset >= 0 ? offset : 10;
         var record = await _recordService.GetRecordByLocation(location,_limit,_offset);
+        
+        if (record.TotalCount == 0)
+        {
+            return NotFound();
+        }
+        
+        return Ok(record);
+    }
+
+    // Get by Location 
+    [HttpGet("Category/{category}")]
+    public async Task<ActionResult<List<Record>>> GetByCategory(
+        string category,    
+        [FromQuery] int limit = 10,
+        [FromQuery] int page = 1)
+    {   
+        int offset = (page - 1) * limit;
+        if(limit <= 0 || limit > 100) {
+
+                return BadRequest("Limit must be between 0 and 100");
+        }
+        if(offset < 0) {
+
+                return BadRequest("Offset must be greater than or equal 0");
+        }
+        if(category == null || category == "")
+        {
+            return BadRequest("Category must be provided");
+        }
+        int _limit = (limit <= 100) && (limit > 0) ? limit : 10;
+        int _offset = offset >= 0 ? offset : 10;
+        var record = await _recordService.GetRecordByCategory(category,_limit,_offset);
         
         if (record.TotalCount == 0)
         {

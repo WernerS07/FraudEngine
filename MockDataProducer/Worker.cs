@@ -12,13 +12,21 @@ public class Worker(ILogger<Worker> logger, IConfiguration configuration) : Back
 
     private static readonly string[] Locations =
     {
+        // Travel Locations (more likely to be flagged)
         "New York", "London", "Paris", "Toronto", "Los Angeles", "Russia", "Japan",
-        "South Africa", "Spain", "India", "Egypt", "China", "Australia"
+        "South Africa", "Spain", "India", "Egypt", "China", "Australia",
+
+        // Add Local South African cities for more relevant data
+        "Cape Town", "Johannesburg", "Durban", "Port Elizabeth", "Pretoria",
+        "Bloemfontein", "Nelspruit", "Polokwane", "Kimberley", "East London",
+        "Pietermaritzburg", "Mthatha", "Mahikeng", "Welkom", "George",
+        "Richards Bay", "Vereeniging", "Springs", "Soweto", "Randburg"
     };
 
     private static readonly string[] Devices =
     {
-        "iPhone 15", "Samsung Galaxy S24", "iPad Pro", "MacBook Pro", "Dell XPS", "Google Pixel 8"
+        "iPhone 15", "Samsung Galaxy S24", "iPad Pro", "MacBook Pro", "Dell XPS", "Google Pixel 8",
+        "OnePlus 11", "Sony Xperia 1", "Huawei P50", "Xiaomi Mi 12","Lenovo ThinkPad X1", "Microsoft Surface Pro"
     };
 
     public static readonly string[] categories =
@@ -61,7 +69,7 @@ public class Worker(ILogger<Worker> logger, IConfiguration configuration) : Back
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     // Throughput controls
-    private const int MessagesPerLoop = 250; // increase/decrease to tune
+    private const int MessagesPerLoop = 850; // increase/decrease to tune
 
     private int PickWeightedCategoryIndex()
     {
@@ -163,6 +171,8 @@ public class Worker(ILogger<Worker> logger, IConfiguration configuration) : Back
                 try
                 {
                     await Task.WhenAll(sendTasks);
+                    await Task.Delay(900, stoppingToken);
+
                 }
                 catch (ProduceException<Null, string> pex)
                 {
@@ -173,6 +183,7 @@ public class Worker(ILogger<Worker> logger, IConfiguration configuration) : Back
                 {
                     logger.LogInformation("Produced {Count} messages", _producedCount);
                 }
+
             }
             catch (Exception ex)
             {
